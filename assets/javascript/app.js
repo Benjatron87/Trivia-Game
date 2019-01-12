@@ -1,8 +1,14 @@
 $(document).ready(function reset() {
 
-    var timer = 30;
+    var timer = 5;
 
-    var question1 = {
+    var num = 0;
+    var right = 0;
+    var wrong = 0;
+
+    var myQuestions = [
+
+         {
             question: "Who is Thor?",
 
             answers: [
@@ -10,8 +16,43 @@ $(document).ready(function reset() {
                 {ans: "God of Mischief", value: false,}, 
                 {ans: "Guy with shield", value: false}, 
                 {ans: "Guy in the Iron Suit", value: false}
-        ]
-    }
+            ]
+        
+        },
+
+         {
+            question: "Who is Loki?",
+
+            answers: [
+                {ans:"God of Thunder", value: false}, 
+                {ans: "God of Mischief", value: true,}, 
+                {ans: "Guy with shield", value: false}, 
+                {ans: "Guy in the Iron Suit", value: false}
+            ]
+        },
+
+        {
+            question: "Who is Captain America?",
+
+            answers: [
+                {ans:"God of Thunder", value: false}, 
+                {ans: "God of Mischief", value: false,}, 
+                {ans: "Guy with shield", value: true}, 
+                {ans: "Guy in the Iron Suit", value: false}
+            ]
+        },
+
+        {
+            question: "Who is Iron Man?",
+
+            answers: [
+                {ans:"God of Thunder", value: false}, 
+                {ans: "God of Mischief", value: false,}, 
+                {ans: "Guy with shield", value: false}, 
+                {ans: "Guy in the Iron Suit", value: true}
+            ]
+        }
+]
 
     function questionDisplay(obj){
 
@@ -21,29 +62,29 @@ $(document).ready(function reset() {
 
         $("#outcome").html("");
 
-        $("#question").text(obj.question);
+        $("#question").text(myQuestions[obj].question);
 
-        obj.answers.sort(function() {
+        myQuestions[obj].answers.sort(function() {
             return 0.5 - Math.random();
           });
 
         for (var i = 0; i < 4; i++){
-        $("#answer" + i).html(obj.answers[i].ans);
+        $("#answer" + i).html(myQuestions[obj].answers[i].ans);
 
-            if(obj.answers[i].value === true){
+            if(myQuestions[obj].answers[i].value === true){
 
-                $("#correct").html(obj.answers[i].ans);
+                $("#correct").html(myQuestions[obj].answers[i].ans);
                 $("#answer" + i).attr("val", true);
                 $("#correct").hide();
             }
             
-            else if(obj.answers[i].value === false){
+            else if(myQuestions[obj].answers[i].value === false){
 
                 $("#answer" + i).attr("val", false);
             }
         }
 
-        $(".answer").click(function(){
+        $(".answer").unbind().click(function(){
 
             var click = ($(this).attr("val"));
 
@@ -53,36 +94,46 @@ $(document).ready(function reset() {
 
                     $("#outcome").html("Correct!");
                     $("#correct").show();
+                    $("#start-button").show();
 
                     for(var i = 0; i < 4; i++){
                         $("#answer" + [i]).hide();
                     }
         
                     clearInterval(intervalId);
-                    roundOver = false;
+                    right++;
+                    $("#right").html(right);
+                    
             }
             else if(click === "false"){
 
                     $("#outcome").html("Wrong!");
                     $("#correct").show();
+                    $("#start-button").show();
 
                     for(var i = 0; i < 4; i++){
                         $("#answer" + [i]).hide();
                     }
         
                     clearInterval(intervalId);
-                    roundOver = false;
+                    wrong++;
+                    $("#wrong").html(wrong);
+                    
             }
         })
     }
 
     $("#start-button").on("click", function(){
 
+        questionDisplay(num);
+
+        num += 1;
+
         $("#start-button").hide();
 
         roundOver = true;
 
-        timer = 30;
+        timer = 5;
 
         run();
 
@@ -110,11 +161,14 @@ $(document).ready(function reset() {
                 $("#correct").show();
                 $("#start-button").show();
 
+                wrong++;
+                $("#wrong").html(wrong);
+
                 clearInterval(intervalId);
             }
         }, 1000);
 
-        questionDisplay(question1);
+       
 
     }
 
