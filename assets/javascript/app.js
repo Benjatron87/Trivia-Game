@@ -1,10 +1,13 @@
 $(document).ready(function reset() {
 
     var timer = 5;
-
     var num = 0;
     var right = 0;
     var wrong = 0;
+
+    $("#right").html(right);
+    $("#wrong").html(wrong);
+    $("#timer").html(timer);
 
     var myQuestions = [
 
@@ -17,7 +20,6 @@ $(document).ready(function reset() {
                 {ans: "Guy with shield", value: false}, 
                 {ans: "Guy in the Iron Suit", value: false}
             ]
-        
         },
 
          {
@@ -123,53 +125,76 @@ $(document).ready(function reset() {
         })
     }
 
+    function endGame(){
+        $("#outcome").html("Game Over!");
+        $("#correct").hide();
+        $("#question").hide();
+        $("#start-button").show().html("Play Again?");
+
+        num = 0;
+        right = 0;
+        wrong = 0;
+
+        for(var i = 0; i < 4; i++){
+            $("#answer" + [i]).hide();
+        }
+
+    }
+
+
     $("#start-button").on("click", function(){
 
-        questionDisplay(num);
-
-        num += 1;
-
+        $("#start-button").html("Next Question");
         $("#start-button").hide();
+        $("#question").show();
 
-        roundOver = true;
+        $("#right").html(right);
+        $("#wrong").html(wrong);
 
-        timer = 5;
+        console.log(num);
+        if (num < myQuestions.length){
+            questionDisplay(num);
 
-        run();
+            num += 1;
+
+            run();
+        }
+        else{
+            endGame()
+        }
 
     });
 
 
 
     function run() {
+        
+            timer = 5;
 
-        $("#timer").html("<h2>" + timer + "</h2>");
+            $("#timer").html(timer);
 
-        intervalId = setInterval(function(){
-            
-            timer--;
+            intervalId = setInterval(function(){
+                
+                timer--;
 
-            $("#timer").html("<h2>" + timer + "</h2>");
+                $("#timer").html(timer);
 
-            if (timer === 0){
-                $("#outcome").html("Out of Time!");
+                if (timer === 0){
+                    $("#outcome").html("Out of Time!");
 
-                for(var i = 0; i < 4; i++){
-                    $("#answer" + [i]).hide();
+                    for(var i = 0; i < 4; i++){
+                        $("#answer" + [i]).hide();
+                    }
+
+                    $("#correct").show();
+                    $("#start-button").show();
+
+                    wrong++;
+                    $("#wrong").html(wrong);
+
+                    clearInterval(intervalId);
                 }
-
-                $("#correct").show();
-                $("#start-button").show();
-
-                wrong++;
-                $("#wrong").html(wrong);
-
-                clearInterval(intervalId);
-            }
-        }, 1000);
-
-       
-
+            }, 1000);
     }
 
 });
