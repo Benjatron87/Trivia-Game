@@ -1,60 +1,18 @@
 $(document).ready(function reset() {
 
-    var timer = 5;
+    var timer = 15;
+    var delay = 3;
     var num = 0;
     var right = 0;
     var wrong = 0;
+
+    var interval1;
+    var interval2;
 
     $("#right").html(right);
     $("#wrong").html(wrong);
     $("#timer").html(timer);
 
-    var myQuestions = [
-
-         {
-            question: "Who is Thor?",
-
-            answers: [
-                {ans:"God of Thunder", value: true}, 
-                {ans: "God of Mischief", value: false,}, 
-                {ans: "Guy with shield", value: false}, 
-                {ans: "Guy in the Iron Suit", value: false}
-            ]
-        },
-
-         {
-            question: "Who is Loki?",
-
-            answers: [
-                {ans:"God of Thunder", value: false}, 
-                {ans: "God of Mischief", value: true,}, 
-                {ans: "Guy with shield", value: false}, 
-                {ans: "Guy in the Iron Suit", value: false}
-            ]
-        },
-
-        {
-            question: "Who is Captain America?",
-
-            answers: [
-                {ans:"God of Thunder", value: false}, 
-                {ans: "God of Mischief", value: false,}, 
-                {ans: "Guy with shield", value: true}, 
-                {ans: "Guy in the Iron Suit", value: false}
-            ]
-        },
-
-        {
-            question: "Who is Iron Man?",
-
-            answers: [
-                {ans:"God of Thunder", value: false}, 
-                {ans: "God of Mischief", value: false,}, 
-                {ans: "Guy with shield", value: false}, 
-                {ans: "Guy in the Iron Suit", value: true}
-            ]
-        }
-]
 
     function questionDisplay(obj){
 
@@ -96,30 +54,32 @@ $(document).ready(function reset() {
 
                     $("#outcome").html("Correct!");
                     $("#correct").show();
-                    $("#start-button").show();
 
                     for(var i = 0; i < 4; i++){
                         $("#answer" + [i]).hide();
                     }
         
-                    clearInterval(intervalId);
+                    clearInterval(interval2);
                     right++;
                     $("#right").html(right);
                     
+                    nextQuestion();
             }
             else if(click === "false"){
 
                     $("#outcome").html("Wrong!");
                     $("#correct").show();
-                    $("#start-button").show();
+                    
 
                     for(var i = 0; i < 4; i++){
                         $("#answer" + [i]).hide();
                     }
         
-                    clearInterval(intervalId);
+                    clearInterval(interval2);
                     wrong++;
                     $("#wrong").html(wrong);
+
+                    nextQuestion();
                     
             }
         })
@@ -131,10 +91,6 @@ $(document).ready(function reset() {
         $("#question").hide();
         $("#start-button").show().html("Play Again?");
 
-        num = 0;
-        right = 0;
-        wrong = 0;
-
         for(var i = 0; i < 4; i++){
             $("#answer" + [i]).hide();
         }
@@ -144,36 +100,68 @@ $(document).ready(function reset() {
 
     $("#start-button").on("click", function(){
 
-        $("#start-button").html("Next Question");
+        myQuestions.sort(function() {
+            return 0.5 - Math.random();
+          });
+
         $("#start-button").hide();
         $("#question").show();
 
+        num = 0;
+        right = 0;
+        wrong = 0;
+
         $("#right").html(right);
         $("#wrong").html(wrong);
+    
+        questionDisplay(0);
 
-        console.log(num);
-        if (num < myQuestions.length){
-            questionDisplay(num);
+        num++
 
-            num += 1;
-
-            run();
-        }
-        else{
-            endGame()
-        }
+        run();
 
     });
 
+    function nextQuestion(){
 
+        clearInterval(interval1);
+
+        delay = 3;
+
+        if(num < myQuestions.length){
+
+            interval1 = setInterval(function(){
+
+                delay--;
+
+                console.log("delay" + delay);
+
+                if(delay === 0){
+
+                    questionDisplay(num);
+
+                    num++;
+
+                    run();
+
+                    clearInterval(interval1);
+                }
+
+            }, 1000);
+
+        }
+        else{
+            endGame();
+        }
+    }
 
     function run() {
         
-            timer = 5;
+            timer = 15;
 
             $("#timer").html(timer);
 
-            intervalId = setInterval(function(){
+            interval2 = setInterval(function(){
                 
                 timer--;
 
@@ -187,12 +175,13 @@ $(document).ready(function reset() {
                     }
 
                     $("#correct").show();
-                    $("#start-button").show();
 
                     wrong++;
                     $("#wrong").html(wrong);
 
-                    clearInterval(intervalId);
+                    nextQuestion();
+
+                    clearInterval(interval2);
                 }
             }, 1000);
     }
